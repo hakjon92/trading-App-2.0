@@ -1,0 +1,14 @@
+sfdx update
+sfdx auth:web:login -d -a DevHub
+cd Desktop\VSCode
+mkdir my_sfdx_project
+cd my_sfdx_project
+git clone https://github.com/hakjon92/tradingAppV2.git
+cd tradingAppV2
+git checkout -b my_branch
+sfdx force:org:create -s -f config/project-scratch-def.json -a tradingApp2-org
+sfdx force:org:open
+
+sfdx force:source:push
+sfdx force:user:permset:assign -n trading_App
+sfdx force:data:record:create -s CollaborationGroup -v "Name='chatter_Group' CollaborationType='Public'"
