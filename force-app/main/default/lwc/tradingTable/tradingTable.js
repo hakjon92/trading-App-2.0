@@ -1,4 +1,5 @@
 import { api, track, wire, LightningElement }from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getTradesList from '@salesforce/apex/tradesDataTableController.getTrades';
 import retrieveRates from '@salesforce/apex/ratesCallout.retrieveRates';
 import createTrade from '@salesforce/apex/tradesDataTableController.createTrade';
@@ -79,9 +80,11 @@ default class tradingTable extends LightningElement {@track data = [];@track col
 		retrieveRates({ initialRate: obj.initalRate, finaleRate: obj.finaleRate}).then(result =>{
 			console.log('tradingTable -- retrieveRatesLwc --> result: ', result);
 			if (result.error || result.result == 'KO') {
-        console.error(result.error);
-      } else 
-      {
+				console.error(result.error);
+				let msg= result.error;
+				this.showToast('Application Message', msg, 'warning', 'dismissable');
+			} else 
+			{
 				this.rateValue = result.rate;
 				this.isLoading = false;
 				if (obj.sellAmount && this.rateValue) this.buyAmount = parseFloat(obj.sellAmount) * parseFloat(this.rateValue);
@@ -106,7 +109,11 @@ default class tradingTable extends LightningElement {@track data = [];@track col
 			JsonInfo: JSON.stringify(obj)
 		}).then(result =>{
 			console.log('tradingTable -- createTradesLwc --> result: ', result);
-			if (result.error || result.warning) {} else {
+			if (result.error || result.result == 'KO') {
+				console.error(result.error);
+				let msg= result.error;
+				this.showToast('Application Message', msg, 'warning', 'dismissable');
+			} else {
 				console.log('@@createTrade success', result);
 				window.location.reload(true);
 			}
@@ -153,4 +160,14 @@ default class tradingTable extends LightningElement {@track data = [];@track col
 		console.log('getvalueToSend:', objectReturn);
 		return objectReturn;
 	}
+
+	showToast(title,message,variant,mode) {
+        const event = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: variant,
+            mode: mode
+        });
+        this.dispatchEvent(event);
+    }
 }
