@@ -1,6 +1,5 @@
 sfdx update
 sfdx auth:web:login -d -a DevHub
-cd Desktop\VSCode
 mkdir my_sfdx_project
 cd my_sfdx_project
 git clone https://github.com/hakjon92/tradingAppV2.git
